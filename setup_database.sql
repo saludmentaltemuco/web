@@ -1,5 +1,5 @@
 -- Script de Inicialización de Base de Datos para Salud Mental Temuco (saludmentaltemuco.cl)
--- Ejecuta este script en el SQL Editor de tu proyecto de Supabase
+-- Compatible con PostgreSQL 15 / 16 en Supabase
 
 -- 1. Habilitar extensión UUID
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   phone TEXT,
   avatar_url TEXT,
   role TEXT DEFAULT 'admin' CHECK (role IN ('admin', 'specialist', 'user')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- 3. Tabla leads (Consultas de Pacientes / Solicitud de Citas)
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS public.leads (
   notes TEXT,
   source TEXT DEFAULT 'website' CHECK (source IN ('website', 'whatsapp', 'referral', 'social')),
   status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'scheduled', 'attended', 'cancelled')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- 4. Tabla blog_posts (Artículos de Salud Mental y Bienestar)
@@ -40,13 +40,20 @@ CREATE TABLE IF NOT EXISTS public.blog_posts (
   excerpt TEXT,
   content TEXT NOT NULL,
   featured_image TEXT,
+  fb_image_url TEXT,
+  ig_image_url TEXT,
+  social_caption TEXT,
+  publish_to_fb BOOLEAN DEFAULT false,
+  publish_to_ig BOOLEAN DEFAULT false,
+  fb_post_id TEXT,
+  ig_media_id TEXT,
   author_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   category TEXT DEFAULT 'Ansiedad y Estrés',
   tags TEXT[] DEFAULT '{}',
   published BOOLEAN DEFAULT false,
-  published_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- 5. Tabla site_settings (Configuración del sitio y claves API de Redes Sociales)
@@ -54,8 +61,8 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   key TEXT NOT NULL UNIQUE,
   value JSONB NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- Habilitar RLS en todas las tablas
@@ -64,16 +71,28 @@ ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
+-- Limpieza de políticas previas para permitir re-ejecución sin errores
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Anyone can create a lead" ON public.leads;
+DROP POLICY IF EXISTS "Authenticated users can view leads" ON public.leads;
+DROP POLICY IF EXISTS "Authenticated users can update leads" ON public.leads;
+DROP POLICY IF EXISTS "Authenticated users can delete leads" ON public.leads;
+DROP POLICY IF EXISTS "Published blog posts are viewable by everyone" ON public.blog_posts;
+DROP POLICY IF EXISTS "Authenticated users can manage blog posts" ON public.blog_posts;
+DROP POLICY IF EXISTS "Public site settings are viewable by everyone" ON public.site_settings;
+DROP POLICY IF EXISTS "Authenticated users can manage site settings" ON public.site_settings;
+
 -- Políticas de seguridad RLS
 
--- Profiles: lectura pública de perfiles, modificación solo por administradores o dueño
+-- Profiles
 CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
 
--- Leads: inserción pública (formulario web), lectura y modificación solo para usuarios autenticados (admin/equipo)
+-- Leads (pacientes pueden insertar; solo autenticados pueden ver/editar)
 CREATE POLICY "Anyone can create a lead" ON public.leads
   FOR INSERT WITH CHECK (true);
 
@@ -86,21 +105,21 @@ CREATE POLICY "Authenticated users can update leads" ON public.leads
 CREATE POLICY "Authenticated users can delete leads" ON public.leads
   FOR DELETE TO authenticated USING (true);
 
--- Blog Posts: lectura pública de posts publicados, CRUD completo para autenticados
+-- Blog Posts
 CREATE POLICY "Published blog posts are viewable by everyone" ON public.blog_posts
   FOR SELECT USING (published = true OR auth.role() = 'authenticated');
 
 CREATE POLICY "Authenticated users can manage blog posts" ON public.blog_posts
   FOR ALL TO authenticated USING (true);
 
--- Site Settings: lectura pública, escritura solo para autenticados
+-- Site Settings
 CREATE POLICY "Public site settings are viewable by everyone" ON public.site_settings
   FOR SELECT USING (true);
 
 CREATE POLICY "Authenticated users can manage site settings" ON public.site_settings
   FOR ALL TO authenticated USING (true);
 
--- Insertar artículo de bienvenida de ejemplo
+-- Insertar artículo de bienvenida
 INSERT INTO public.blog_posts (
   title, slug, excerpt, content, category, tags, published, published_at
 ) VALUES (
