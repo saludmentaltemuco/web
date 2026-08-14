@@ -46,13 +46,13 @@ interface BreadcrumbSchemaProps {
  * Renders JSON-LD schema for the real estate company
  */
 export function OrganizationSchema({
-  name = 'Activos en Red',
-  description = 'Encuentra tu próxima propiedad con Activos en Red. Casas, departamentos, terrenos y más.',
-  url = 'https://activosenred.cl',
-  logo = '/images/logo.png',
-  email = 'contacto@activosenred.cl',
-  phone = '+56 9 73081220',
-  address = 'Gómez Carreño 333, La Serena',
+  name = 'Salud Mental Temuco',
+  description = 'Centro de psicología, psicoterapia y bienestar emocional en Temuco.',
+  url = 'https://saludmentaltemuco.cl',
+  logo = '/logo-23.webp',
+  email = 'contacto@saludmentaltemuco.cl',
+  phone = '+56 9 9867 1023',
+  address = 'Av. Alemania 0850, Oficina 402, Temuco, Chile',
   socialLinks = {},
 }: OrganizationSchemaProps) {
   const schema = {

@@ -299,7 +299,7 @@ export default function AdminConfiguracionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Número de WhatsApp (con código de país ej: 56987654321)
+                Número de WhatsApp (con código de país ej: 56998671023)
               </label>
               <input
                 type="text"
