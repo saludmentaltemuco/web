@@ -20,6 +20,10 @@ import { DEFAULT_SETTINGS, SERVICE_OPTIONS, ModalityType } from '@/types';
 
 const FAQS = [
   {
+    q: '¿Cuáles son los medios de pago disponibles?',
+    a: 'Aceptamos pagos por transferencia bancaria, link de pago directo, Webpay (tarjetas de débito y crédito) y Mercado Pago. Una vez realizado el pago, se emite la boleta de honorarios para tu reembolso.',
+  },
+  {
     q: '¿Cómo funciona el reembolso en Isapre o Seguros Complementarios?',
     a: 'Al finalizar tu sesión se emite una boleta de honorarios electrónica con el código de prestación correspondiente. Con este documento puedes solicitar el reembolso directamente en tu Isapre o seguro de salud según la cobertura de tu plan.',
   },

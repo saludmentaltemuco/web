@@ -1,4 +1,4 @@
-import { ShieldCheck, Award, HeartHandshake, FileCheck2, Clock, Sparkles } from 'lucide-react';
+import { ShieldCheck, Award, HeartHandshake, CreditCard, Clock, Sparkles } from 'lucide-react';
 
 const reasons = [
   {
@@ -12,9 +12,9 @@ const reasons = [
     description: 'Garantizamos absoluta reserva bajo el estricto código de ética profesional y la ley de derechos del paciente.',
   },
   {
-    icon: FileCheck2,
-    title: 'Boleta Reembolsable',
-    description: 'Todas nuestras atenciones emiten boleta de honorarios válida para reembolso en Isapres, Seguros Complementarios y Fonasa (según plan).',
+    icon: CreditCard,
+    title: 'Medios de Pago y Boleta',
+    description: 'Pagos por transferencia, link de pago, Webpay y Mercado Pago. Todas nuestras atenciones emiten boleta de honorarios para reembolso en Isapres y Seguros.',
   },
   {
     icon: HeartHandshake,
