@@ -137,16 +137,19 @@ export function ServicesSection() {
         </div>
 
         {/* Bottom Banner */}
-        <div className="mt-16 bg-gradient-to-r from-primary-900 to-primary-950 rounded-3xl p-8 sm:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h4 className="text-xl sm:text-2xl font-bold">¿Tienes dudas sobre qué tipo de terapia necesitas?</h4>
-            <p className="text-sm text-slate-300 mt-1 max-w-xl">
-              Escríbenos y nuestro equipo clínico de admisión te orientará sin costo para encontrar al especialista más idóneo.
+        <div className="mt-16 bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-primary-800/40 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="space-y-2 relative z-10">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-accent-400">¿Primera vez en terapia?</span>
+            <h4 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
+              ¿Tienes dudas sobre qué tipo de terapia necesitas?
+            </h4>
+            <p className="text-sm text-slate-200 mt-1 max-w-xl leading-relaxed">
+              Escríbenos y nuestro equipo clínico de admisión te orientará sin costo para encontrar al especialista más idóneo para ti.
             </p>
           </div>
           <Link
             href="/contacto"
-            className="whitespace-nowrap px-6 py-3 rounded-full bg-accent-500 hover:bg-accent-400 text-slate-950 font-bold text-sm shadow-md transition-all hover:scale-105 shrink-0"
+            className="whitespace-nowrap px-7 py-3.5 rounded-full bg-accent-500 hover:bg-accent-400 text-slate-950 font-extrabold text-sm shadow-lg transition-all hover:scale-105 shrink-0 relative z-10"
           >
             Solicitar Orientación Gratuita
           </Link>

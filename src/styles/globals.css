@@ -31,15 +31,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: var(--color-secondary);
-  }
-
-  a {
-    color: var(--color-primary);
-  }
-  
-  a:hover {
-    color: var(--color-accent);
+    color: inherit;
   }
 
   /* Custom scrollbar */
