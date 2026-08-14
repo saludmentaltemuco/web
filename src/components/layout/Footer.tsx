@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { HeartPulse, Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { DEFAULT_SETTINGS } from '@/types';
 
@@ -29,18 +30,14 @@ function Footer() {
           
           {/* Col 1: Brand & Identity */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-accent-400 flex items-center justify-center text-white shadow-md">
-                <HeartPulse className="w-5 h-5 stroke-[2]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight">
-                  Salud Mental <span className="text-accent-400">Temuco</span>
-                </span>
-                <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
-                  Centro de Psicología & Bienestar
-                </span>
-              </div>
+            <Link href="/" className="inline-block group mb-2">
+              <Image
+                src="/logo-23.webp"
+                alt="Salud Mental Temuco"
+                width={180}
+                height={50}
+                className="h-10 md:h-12 w-auto object-contain brightness-0 invert opacity-95 transition-opacity group-hover:opacity-100"
+              />
             </Link>
 
             <p className="text-sm text-slate-400 leading-relaxed">

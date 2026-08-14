@@ -1,5 +1,6 @@
 import { LayoutDashboard, Users, FileText, Settings, LogOut, ExternalLink, HeartPulse, Plus } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createServerClient } from '@/lib/supabase/server';
 import { DEFAULT_SETTINGS } from '@/types';
 
@@ -35,19 +36,15 @@ export default async function AdminLayout({
         
         {/* Logo Area */}
         <div className="px-6 py-5 border-b border-slate-800/80">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-tr from-primary-600 to-accent-500 rounded-xl flex items-center justify-center shadow-lg text-white">
-              <HeartPulse className="w-5 h-5 stroke-[2]" />
-            </div>
-            <div>
-              <p className="text-white font-extrabold text-xs leading-tight tracking-wider uppercase">
-                SALUD MENTAL
-              </p>
-              <p className="text-accent-400 text-[10px] uppercase tracking-widest font-semibold">
-                Temuco · Admin
-              </p>
-            </div>
-          </div>
+          <Link href="/admin" className="flex items-center gap-3">
+            <Image
+              src="/logo-23.webp"
+              alt="Salud Mental Temuco"
+              width={160}
+              height={45}
+              className="h-9 w-auto object-contain brightness-0 invert"
+            />
+          </Link>
         </div>
 
         {/* Navigation */}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Phone, HeartPulse, Clock, MessageSquareQuote } from 'lucide-react';
 import { cn } from '@/lib';
@@ -60,18 +61,15 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary-700 via-primary-600 to-accent-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                <HeartPulse className="w-6 h-6 stroke-[2]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg md:text-xl font-extrabold text-primary-950 tracking-tight leading-tight group-hover:text-primary-700 transition-colors">
-                  Salud Mental <span className="text-accent-600">Temuco</span>
-                </span>
-                <span className="text-[11px] text-slate-500 font-medium tracking-wide uppercase">
-                  Centro de Psicología & Psicoterapia
-                </span>
-              </div>
+            <Link href="/" className="flex items-center gap-3 group py-2">
+              <Image
+                src="/logo-23.webp"
+                alt="Salud Mental Temuco"
+                width={180}
+                height={50}
+                className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}
