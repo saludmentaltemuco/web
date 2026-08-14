@@ -32,8 +32,8 @@ const FAQS = [
     a: 'Solo necesitas un computador, tablet o celular con cámara y micrófono estables, buena conexión a internet y, muy importante, un lugar privado donde te sientas cómodo/a para hablar con total tranquilidad.',
   },
   {
-    q: '¿Dónde están ubicados en Temuco para sesiones presenciales?',
-    a: `Nuestra consulta presencial se encuentra ubicada en ${DEFAULT_SETTINGS.contact_address}, en un sector de fácil acceso y estacionamiento cercano.`,
+    q: '¿Dónde atienden para sesiones presenciales y online?',
+    a: 'Brindamos atención presencial en la ciudad de Temuco y atención online por videollamada para pacientes de todo Chile.',
   },
   {
     q: '¿Se atienden urgencias psiquiátricas inmediatas?',
@@ -138,9 +138,9 @@ function ContactoContent() {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Dirección Consulta</h3>
-                    <p className="text-sm text-slate-600 mt-0.5">{DEFAULT_SETTINGS.contact_address}</p>
-                    <span className="text-[11px] text-primary-600 font-medium">Temuco, Región de La Araucanía</span>
+                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Ubicación y Cobertura</h3>
+                    <p className="text-sm text-slate-700 font-medium mt-0.5">Temuco, Región de La Araucanía</p>
+                    <span className="text-[11px] text-slate-500 font-normal">Atención presencial en Temuco y online para todo Chile</span>
                   </div>
                 </div>
 

@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   contact_phone: '+56 9 9867 1023',
   contact_whatsapp: '56998671023',
   whatsapp_avatar: '/therapist.png',
-  contact_address: 'Av. Alemania 0850, Oficina 402, Temuco, Chile',
+  contact_address: '',
   opening_hours: 'Lunes a Viernes: 08:30 a 20:00 hrs | Sábados: 09:00 a 14:00 hrs',
   social_media: {
     facebook: 'https://facebook.com/saludmentaltemuco',

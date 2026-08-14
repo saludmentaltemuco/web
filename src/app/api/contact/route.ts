@@ -105,7 +105,7 @@ export async function POST(request: Request) {
             </div>
           </div>
           <div style="background-color: #f8fafc; padding: 14px 24px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #64748b;">
-            ${siteName} — ${DEFAULT_SETTINGS.contact_address}
+            ${siteName} — Temuco, Chile
           </div>
         </div>
       `;

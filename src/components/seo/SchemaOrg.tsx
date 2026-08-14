@@ -52,7 +52,7 @@ export function OrganizationSchema({
   logo = '/logo-23.webp',
   email = 'contacto@saludmentaltemuco.cl',
   phone = '+56 9 9867 1023',
-  address = 'Av. Alemania 0850, Oficina 402, Temuco, Chile',
+  address = 'Temuco, Región de La Araucanía, Chile',
   socialLinks = {},
 }: OrganizationSchemaProps) {
   const schema = {

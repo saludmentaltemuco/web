@@ -102,7 +102,7 @@ export default function NosotrosPage() {
             <span className="text-xs font-bold text-accent-400 uppercase tracking-wider">Ubicación y Atención</span>
             <h3 className="text-2xl font-bold">Consultas Presenciales en Temuco y Sesiones Online</h3>
             <p className="text-sm text-slate-300 leading-relaxed">
-              Estamos ubicados en {DEFAULT_SETTINGS.contact_address}, en un entorno tranquilo y accesible. Además, brindamos atención online con la misma efectividad clínica para todo el país.
+              Brindamos atención presencial en la ciudad de Temuco en un entorno profesional, tranquilo y confidencial. Además, ofrecemos atención online con la misma efectividad clínica para pacientes de todo Chile.
             </p>
           </div>
           <Link

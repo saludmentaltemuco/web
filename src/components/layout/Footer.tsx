@@ -132,10 +132,6 @@ function Footer() {
               Contacto y Atención
             </h3>
             <ul className="space-y-3.5 text-sm">
-              <li className="flex items-start gap-3 text-slate-300">
-                <MapPin className="w-4 h-4 text-accent-400 flex-shrink-0 mt-1" />
-                <span>{DEFAULT_SETTINGS.contact_address}</span>
-              </li>
               <li className="flex items-center gap-3 text-slate-300">
                 <Phone className="w-4 h-4 text-accent-400 flex-shrink-0" />
                 <a href={`tel:${DEFAULT_SETTINGS.contact_phone}`} className="hover:text-white transition-colors">

@@ -145,7 +145,6 @@ export function generateOrganizationSchema() {
     email: DEFAULT_SETTINGS.contact_email,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: DEFAULT_SETTINGS.contact_address,
       addressLocality: 'Temuco',
       addressRegion: 'La Araucanía',
       addressCountry: 'CL',
