@@ -85,11 +85,32 @@ function ContactoContent() {
         service_type: formData.service_type,
         modality: formData.modality,
         message: formData.message || null,
-        source: 'website',
+        source: 'Página de Contacto',
         status: 'new',
       });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.warn('Error al guardar lead en Supabase:', insertError);
+      }
+
+      // Enviar correos de notificación vía Resend API
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            service_type: formData.service_type,
+            modality: formData.modality,
+            message: formData.message,
+            source: 'Página de Contacto',
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Error enviando notificación por correo:', emailErr);
+      }
 
       setSuccess(true);
       setFormData({

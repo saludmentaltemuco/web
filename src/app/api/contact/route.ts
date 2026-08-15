@@ -18,11 +18,16 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!resend) {
-      console.warn('RESEND_API_KEY no está configurada. Saltando envío de email.');
-      return NextResponse.json({ success: true, warning: 'No API key configured' });
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.warn('⚠️ [API Contact] RESEND_API_KEY no está configurada en las variables de entorno. Saltando envío de email.');
+      return NextResponse.json({ 
+        success: true, 
+        warning: 'RESEND_API_KEY no configurada. Guarda la clave en .env.local para habilitar los correos.' 
+      });
     }
 
+    const resend = new Resend(apiKey);
     const siteName = process.env.NEXT_PUBLIC_SITE_NAME || DEFAULT_SETTINGS.site_name;
     const fromAddress = process.env.EMAIL_FROM || `${siteName} <onboarding@resend.dev>`;
     const adminRecipient = process.env.NOTIFICATION_EMAIL || DEFAULT_SETTINGS.contact_email;
@@ -56,6 +61,7 @@ export async function POST(request: Request) {
     `;
 
     let adminEmailData = null;
+    let adminError = null;
     try {
       const adminRes = await resend.emails.send({
         from: fromAddress,
@@ -64,13 +70,22 @@ export async function POST(request: Request) {
         html: adminHtmlContent,
         reply_to: email,
       });
-      adminEmailData = adminRes.data;
+
+      if (adminRes.error) {
+        console.error('❌ Error de Resend enviando email a administración:', adminRes.error);
+        adminError = adminRes.error;
+      } else {
+        adminEmailData = adminRes.data;
+        console.log('✅ Email enviado a administración con éxito:', adminRes.data?.id);
+      }
     } catch (err: any) {
-      console.error('Error enviando email a administración:', err);
+      console.error('❌ Excepción enviando email a administración:', err);
+      adminError = err.message;
     }
 
     // 2. Email de Confirmación para el Paciente
     let leadEmailData = null;
+    let leadError = null;
     try {
       const leadSubject = `Hemos recibido tu solicitud de atención — ${siteName}`;
 
@@ -116,15 +131,25 @@ export async function POST(request: Request) {
         subject: leadSubject,
         html: leadHtmlContent,
       });
-      leadEmailData = leadRes.data;
+
+      if (leadRes.error) {
+        console.warn('⚠️ Nota sobre confirmación al paciente (puede requerir dominio verificado):', leadRes.error);
+        leadError = leadRes.error;
+      } else {
+        leadEmailData = leadRes.data;
+        console.log('✅ Email de confirmación enviado al paciente:', leadRes.data?.id);
+      }
     } catch (err: any) {
-      console.warn('Confirmación al paciente omitida:', err.message);
+      console.warn('⚠️ Confirmación al paciente omitida:', err.message);
+      leadError = err.message;
     }
 
     return NextResponse.json({
       success: true,
       adminEmail: adminEmailData,
       leadEmail: leadEmailData,
+      adminError,
+      leadError,
     });
   } catch (error: any) {
     console.error('Error procesando request de contacto:', error);

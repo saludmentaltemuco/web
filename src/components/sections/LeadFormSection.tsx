@@ -33,12 +33,31 @@ export function LeadFormSection() {
         service_type: formData.service_type,
         modality: formData.modality,
         message: formData.message || null,
-        source: 'website',
+        source: 'Formulario Home Lead',
         status: 'new',
       });
 
       if (insertError) {
-        throw insertError;
+        console.warn('Error al guardar lead en Supabase:', insertError);
+      }
+
+      // Enviar correos de notificación vía Resend API
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            service_type: formData.service_type,
+            modality: formData.modality,
+            message: formData.message,
+            source: 'Formulario Home Lead',
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Error enviando notificación por correo:', emailErr);
       }
 
       setSuccess(true);
