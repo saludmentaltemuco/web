@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { DEFAULT_SETTINGS } from '@/types';
-
-// Create a singleton of Resend only if the API key exists
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: Request) {
   try {
@@ -18,12 +16,53 @@ export async function POST(request: Request) {
       );
     }
 
+    // ─── 1. Guardar lead en Supabase (siempre, antes de intentar emails) ───────
+    let savedLead = null;
+    let leadSaveError = null;
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Variables de Supabase no configuradas (URL o ANON_KEY)');
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const { data: insertedLead, error: dbError } = await supabase
+        .from('leads')
+        .insert({
+          name,
+          email,
+          phone: phone || null,
+          message: message || null,
+          service_type: service_type || null,
+          modality: modality || 'presencial',
+          source,
+          status: 'new',
+        })
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error('❌ Error guardando lead en Supabase:', dbError);
+        leadSaveError = dbError.message;
+      } else {
+        savedLead = insertedLead;
+        console.log('✅ Lead guardado en Supabase con ID:', insertedLead?.id);
+      }
+    } catch (err: any) {
+      console.error('❌ Excepción guardando lead en Supabase:', err.message);
+      leadSaveError = err.message;
+    }
+
+    // ─── 2. Enviar emails vía Resend ──────────────────────────────────────────
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      console.warn('⚠️ [API Contact] RESEND_API_KEY no está configurada en las variables de entorno. Saltando envío de email.');
-      return NextResponse.json({ 
-        success: true, 
-        warning: 'RESEND_API_KEY no configurada. Guarda la clave en .env.local para habilitar los correos.' 
+      console.warn('⚠️ [API Contact] RESEND_API_KEY no configurada. Lead guardado en Supabase igualmente.');
+      return NextResponse.json({
+        success: true,
+        savedToDatabase: !!savedLead,
+        warning: 'RESEND_API_KEY no configurada. El lead fue guardado en la base de datos.',
       });
     }
 
@@ -34,7 +73,7 @@ export async function POST(request: Request) {
 
     const adminSubject = `[Nueva Consulta Clínica] ${name} — ${service_type || 'Salud Mental'}`;
 
-    // 1. Email para el Equipo de Admisión / Psicólogos
+    // 2a. Email para el Equipo de Admisión / Psicólogos
     const adminHtmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
         <div style="background-color: #043F83; padding: 24px; text-align: center;">
@@ -48,6 +87,7 @@ export async function POST(request: Request) {
           <p style="margin: 8px 0;"><strong>Especialidad:</strong> <span style="background-color: #eef5fc; padding: 3px 8px; border-radius: 6px; font-weight: bold; color: #043F83;">${service_type || 'Consulta General'}</span></p>
           <p style="margin: 8px 0;"><strong>Modalidad:</strong> ${modality === 'online' ? 'Online (Telepsicología)' : 'Presencial en Temuco'}</p>
           <p style="margin: 8px 0;"><strong>Canal:</strong> ${source}</p>
+          ${savedLead?.id ? `<p style="margin: 8px 0; font-size: 11px; color: #94a3b8;"><strong>ID interno:</strong> ${savedLead.id}</p>` : ''}
           
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
           
@@ -83,7 +123,7 @@ export async function POST(request: Request) {
       adminError = err.message;
     }
 
-    // 2. Email de Confirmación para el Paciente
+    // 2b. Email de Confirmación para el Paciente
     let leadEmailData = null;
     let leadError = null;
     try {
@@ -146,10 +186,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
+      savedToDatabase: !!savedLead,
+      leadId: savedLead?.id || null,
       adminEmail: adminEmailData,
       leadEmail: leadEmailData,
       adminError,
       leadError,
+      dbError: leadSaveError,
     });
   } catch (error: any) {
     console.error('Error procesando request de contacto:', error);
