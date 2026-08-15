@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       }
 
       const supabase = createClient(supabaseUrl, supabaseKey);
-      const { data: insertedLead, error: dbError } = await supabase
+      const { error: dbError } = await supabase
         .from('leads')
         .insert({
           name,
@@ -39,16 +39,14 @@ export async function POST(request: Request) {
           modality: modality || 'presencial',
           source,
           status: 'new',
-        })
-        .select()
-        .single();
+        });
 
       if (dbError) {
         console.error('❌ Error guardando lead en Supabase:', dbError);
         leadSaveError = dbError.message;
       } else {
-        savedLead = insertedLead;
-        console.log('✅ Lead guardado en Supabase con ID:', insertedLead?.id);
+        savedLead = { saved: true };
+        console.log('✅ Lead guardado en Supabase correctamente');
       }
     } catch (err: any) {
       console.error('❌ Excepción guardando lead en Supabase:', err.message);

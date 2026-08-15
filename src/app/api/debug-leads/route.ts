@@ -23,7 +23,7 @@ export async function GET() {
 
     const supabase = createClient(url, key);
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('leads')
       .insert({
         name: 'TEST_DIAGNOSTICO',
@@ -34,9 +34,7 @@ export async function GET() {
         modality: 'presencial',
         source: 'website',
         status: 'new',
-      })
-      .select()
-      .single();
+      });
 
     if (error) {
       results.insertError = {
@@ -46,7 +44,7 @@ export async function GET() {
         hint: error.hint,
       };
     } else {
-      results.insertTest = { success: true, id: data?.id };
+      results.insertTest = { success: true };
     }
   } catch (err: any) {
     results.insertError = { exception: err.message };
