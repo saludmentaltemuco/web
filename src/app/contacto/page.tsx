@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   ChevronDown
 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 import { DEFAULT_SETTINGS, SERVICE_OPTIONS, ModalityType } from '@/types';
 
 const FAQS = [
@@ -77,39 +76,24 @@ function ContactoContent() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error: insertError } = await supabase.from('leads').insert({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || null,
-        service_type: formData.service_type,
-        modality: formData.modality,
-        message: formData.message || null,
-        source: 'Página de Contacto',
-        status: 'new',
+      // El API route maneja tanto el guardado en BD como el envío de correos
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service_type: formData.service_type,
+          modality: formData.modality,
+          message: formData.message,
+          source: 'website',
+        }),
       });
 
-      if (insertError) {
-        console.warn('Error al guardar lead en Supabase:', insertError);
-      }
-
-      // Enviar correos de notificación vía Resend API
-      try {
-        await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            service_type: formData.service_type,
-            modality: formData.modality,
-            message: formData.message,
-            source: 'Página de Contacto',
-          }),
-        });
-      } catch (emailErr) {
-        console.error('Error enviando notificación por correo:', emailErr);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Error al enviar la solicitud');
       }
 
       setSuccess(true);
